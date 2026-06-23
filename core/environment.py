@@ -16,7 +16,8 @@ SCREEN_HEIGHT = 400
 PIXELS_PER_METER = 150
 
 class CartPoleEnv:
-    def __init__(self):
+    def __init__(self, integrator="rk4"):
+        self.integrator = integrator.lower()
         self.x_threshold = 2.4
         self.theta_threshold_radians = np.radians(12.0)
         self.force_mag = 10.0
@@ -47,15 +48,19 @@ class CartPoleEnv:
         return np.array([x_dot, x_double_dot, theta_dot, theta_double_dot])
 
     def step(self, action):
-        """Avança o tempo usando o integrador de alta ordem Runge-Kutta (RK4)."""
+        """Avança o tempo usando o integrador selecionado (RK4 ou Euler)."""
         force = -self.force_mag if action == 0 else self.force_mag
         
         state = self.state
-        k1 = self._cartpole_derivatives(state, force)
-        k2 = self._cartpole_derivatives(state + (self.dt / 2.0) * k1, force)
-        k3 = self._cartpole_derivatives(state + (self.dt / 2.0) * k2, force)
-        k4 = self._cartpole_derivatives(state + self.dt * k3, force)
-        self.state = state + (self.dt / 6.0) * (k1 + 2.0 * k2 + 2.0 * k3 + k4)
+        if self.integrator == "euler":
+            derivatives = self._cartpole_derivatives(state, force)
+            self.state = state + self.dt * derivatives
+        else:  # rk4
+            k1 = self._cartpole_derivatives(state, force)
+            k2 = self._cartpole_derivatives(state + (self.dt / 2.0) * k1, force)
+            k3 = self._cartpole_derivatives(state + (self.dt / 2.0) * k2, force)
+            k4 = self._cartpole_derivatives(state + self.dt * k3, force)
+            self.state = state + (self.dt / 6.0) * (k1 + 2.0 * k2 + 2.0 * k3 + k4)
         
         x, x_dot, theta, theta_dot = self.state
         

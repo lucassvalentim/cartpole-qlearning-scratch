@@ -44,7 +44,7 @@ def plot_performance():
     # Consolidação de Legendas de Ambos os Eixos
     lines1, labels1 = ax1.get_legend_handles_labels()
     lines2, labels2 = ax2.get_legend_handles_labels()
-    ax1.legend(lines1 + lines2, labels1 + labels2, loc='lower right', framealpha=0.9)
+    ax1.legend(lines1 + lines2, labels1 + labels2, loc='upper right', framealpha=0.9)
 
     # Título Metodológico e Ajustes Finais
     plt.title('Dinâmica de Convergência do Agente: Q-Learning Tabular + RK4', 
