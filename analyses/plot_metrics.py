@@ -2,11 +2,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-def plot_performance():
+def plot_performance(integrator='rk4'):
     try:
-        data = np.load("outputs/saved_models/metrics_treino.npy", allow_pickle=True).item()
+        data = np.load(f"outputs/saved_models/metrics_treino_{integrator}.npy", allow_pickle=True).item()
     except FileNotFoundError:
-        print("ERRO: O arquivo 'outputs/saved_models/metrics_treino.npy' não foi encontrado!")
+        print(f"ERRO: O arquivo 'outputs/saved_models/metrics_treino_{integrator}.npy' não foi encontrado!")
         print("Execute o script 'train.py' primeiro para gerar os dados de treino.")
         return
 
@@ -25,10 +25,16 @@ def plot_performance():
     plt.rcParams.update({'font.size': 11, 'font.family': 'sans-serif'})
 
     # Plotagem do Eixo Principal: Recompensa (Curva de Aprendizado)
-    # Linha clara ao fundo mostrando o ruído real do treino
-    ax1.plot(episodes, rewards, color='#1f77b4', alpha=0.15, label='Recompensa Real')
+    # Linha clara ao fundo mostrando o ruído real do treino (opacidade reduzida para evitar ruído visual)
+    ax1.plot(episodes, rewards, color='#1f77b4', alpha=0.08, label='Recompensa Real')
     # Linha sólida destacada mostrando a tendência suavizada
     ax1.plot(smoothed_episodes, smoothed_rewards, color='#1f77b4', linewidth=2, label=f'Média Móvel ({window_size} ep.)')
+    
+    # Limita o eixo Y com base na variação da média móvel para evitar distorções por picos atípicos
+    ymin = np.min(smoothed_rewards)
+    ymax = np.max(smoothed_rewards)
+    margin = (ymax - ymin) * 0.1 if ymax != ymin else 1.0
+    ax1.set_ylim(ymin - margin, ymax + margin)
     
     ax1.set_xlabel('Episódios de Treinamento', fontweight='bold', labelpad=10)
     ax1.set_ylabel('Recompensa Acumulada', color='#1f77b4', fontweight='bold', labelpad=10)
@@ -44,19 +50,19 @@ def plot_performance():
     # Consolidação de Legendas de Ambos os Eixos
     lines1, labels1 = ax1.get_legend_handles_labels()
     lines2, labels2 = ax2.get_legend_handles_labels()
-    ax1.legend(lines1 + lines2, labels1 + labels2, loc='upper right', framealpha=0.9)
+    ax1.legend(lines1 + lines2, labels1 + labels2, loc='upper left', framealpha=0.9)
 
     # Título Metodológico e Ajustes Finais
-    plt.title('Dinâmica de Convergência do Agente: Q-Learning Tabular + RK4', 
+    plt.title(f'Dinâmica de Convergência do Agente: Q-Learning Tabular + {integrator}', 
               fontsize=13, fontweight='bold', pad=15)
     fig.tight_layout()
 
     # Salva uma cópia em alta definição para o documento final do trabalho
-    plt.savefig("outputs/plots/resultado_convergencia_cartpole.png", bbox_inches='tight', dpi=300)
-    print("-> Gráfico acadêmico salvo em alta resolução: 'outputs/plots/resultado_convergencia_cartpole.png'")
+    plt.savefig(f"outputs/plots/resultado_convergencia_cartpole_{integrator}.png", bbox_inches='tight', dpi=300)
+    print(f"-> Gráfico acadêmico salvo em alta resolução: 'outputs/plots/resultado_convergencia_cartpole_{integrator}.png'")
     
     # Exibe a janela interativa na tela
     plt.show()
 
 if __name__ == "__main__":
-    plot_performance()
+    plot_performance('euler')

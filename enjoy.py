@@ -3,14 +3,22 @@ import sys
 import pygame
 from core.environment import CartPoleEnv
 from core.agent import QLearningAgent
+import numpy as np
+import random
+
+# Define a semente global dos dados.
+SEMENTE_CIE_DADOS = 56
+np.random.seed(SEMENTE_CIE_DADOS)
+random.seed(SEMENTE_CIE_DADOS)
 
 if __name__ == "__main__":
-    env = CartPoleEnv()
+    integrator = 'rk4'
+    env = CartPoleEnv(integrator=integrator)
     agent = QLearningAgent()
     
     # Tenta carregar o cérebro persistido gerado pelo train.py
     try:
-        agent.load_policy("outputs/saved_models/q_table_otimizada.npy")
+        agent.load_policy(f"outputs/saved_models/q_table_otimizada_{integrator}.npy")
     except FileNotFoundError:
         print("ERRO: O arquivo 'q_table_otimizada.npy' não foi encontrado!")
         print("Por favor, execute o script 'train.py' primeiro para treinar o modelo.")

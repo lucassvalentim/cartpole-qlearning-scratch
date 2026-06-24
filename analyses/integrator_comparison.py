@@ -12,10 +12,10 @@ from core.environment import CartPoleEnv
 from core.agent import QLearningAgent
 
 def run_training_experiment(integrator_name, episodes=4000, seed=42):
-    # Garante o determinismo absoluto para o experimento ser justo
+    # Define a semente global dos dados.
     np.random.seed(seed)
     random.seed(seed)
-    
+
     env = CartPoleEnv(integrator=integrator_name)
     agent = QLearningAgent()
     
@@ -49,7 +49,7 @@ def run_training_experiment(integrator_name, episodes=4000, seed=42):
 
 def main():
     print("=================== COMPARAÇÃO DE INTEGRADORES ===================")
-    episodes = 3000
+    episodes = 8000
     window_size = 50
     
     # Executa os experimentos

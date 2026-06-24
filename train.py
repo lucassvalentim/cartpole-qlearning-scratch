@@ -10,10 +10,11 @@ np.random.seed(SEMENTE_CIE_DADOS)
 random.seed(SEMENTE_CIE_DADOS)
 
 if __name__ == "__main__":
-    env = CartPoleEnv()
+    integrator = "euler"
+    env = CartPoleEnv(integrator=integrator)
     agent = QLearningAgent()
     
-    num_episodes = 4000
+    num_episodes = 8000
     print(f"Iniciando treinamento puramente matemático de {num_episodes} episódios...")
     
     # Estruturas para registrar os dados acadêmicos que usaremos na plotagem de gráficos
@@ -52,12 +53,12 @@ if __name__ == "__main__":
     print("\nTreinamento Finalizado!")
     
     # SALVAMENTO MODULAR
-    agent.save_policy("outputs/saved_models/q_table_otimizada.npy")
+    agent.save_policy(f"outputs/saved_models/q_table_otimizada_{integrator}.npy")
     
     # Salva os dados analíticos das métricas para a Fase de Gráficos
     dados_graficos = {
         "rewards": reward_history,
         "epsilons": epsilon_history
     }
-    np.save("outputs/saved_models/metrics_treino.npy", dados_graficos)
-    print("-> Métricas de treinamento exportadas para 'outputs/saved_models/metrics_treino.npy'. ready para plotagem.")
+    np.save(f"outputs/saved_models/metrics_treino_{integrator}.npy", dados_graficos)
+    print(f"-> Métricas de treinamento exportadas para 'outputs/saved_models/metrics_treino_{integrator}.npy'. ready para plotagem.")

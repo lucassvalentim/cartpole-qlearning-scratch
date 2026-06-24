@@ -5,8 +5,8 @@ import random
 class QLearningAgent:
     def __init__(
         self,
-        alpha = 0.2,
-        alpha_decay = 0.999,
+        alpha = 0.3,
+        alpha_decay = 0.995,
         alpha_min = 0.01,
         epsilon = 1.0,   
         epsilon_decay = 0.998,  
@@ -24,17 +24,17 @@ class QLearningAgent:
         self.gamma = gamma
         
         # Definição das Malhas Não-Lineares de Discretização (Foco em 0 graus)
-        self.bins_x = np.linspace(-2.4, 2.4, 2)            
-        self.bins_x_dot = np.linspace(-3.0, 3.0, 2)        
+        self.bins_x = np.array([-1.5, -0.5, 0.5, 1.5])            
+        self.bins_x_dot = np.array([-1.5, -0.5, 0.5, 1.5])        
         
         base_points_theta = np.linspace(-1, 1, 9)
         self.bins_theta = np.sign(base_points_theta) * (np.abs(base_points_theta) ** 1.8) * np.radians(12.0)
         
-        base_points_omega = np.linspace(-1, 1, 6)
+        base_points_omega = np.linspace(-1, 1, 7)
         self.bins_theta_dot = np.sign(base_points_omega) * (np.abs(base_points_omega) ** 1.5) * 2.0
         
-        # Tabela Q Inicializada Zera (3x3x10x7x2)
-        self.q_table = np.zeros((3, 3, 10, 7, 2))
+        # Tabela Q Inicializada Zera (5x5x10x8x2)
+        self.q_table = np.zeros((5, 5, 10, 8, 2))
 
     def discretize_state(self, continuous_state):
         """Converte o vetor contínuo do ambiente em índices discretos estruturados."""
